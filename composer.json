@@ -11,7 +11,7 @@
         "robmorgan/phinx": "~0.5",
         "ray/aura-sql-module": "~1.0"
     },
-    "autoload-dev": {
+    "autoload   ": {
         "psr-4": {
             "Koriym\\DbAppPackage\\": "src/"
         }
