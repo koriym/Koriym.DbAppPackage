@@ -37,12 +37,10 @@ class DbAppPackage extends AbstractModule
     private $dbDir;
 
     /**
-     * @param string $type
-     * @param string $host
-     * @param string $name
-     * @param string $user
-     * @param string $pass
-     * @param string $read
+     * @param string $dsn  PDO DSN {dbtype}:dbname={dbname};host={dbhost};port={dbport}
+     * @param string $user username
+     * @param string $pass password if any
+     * @param string $read comma separated slave db server list
      */
     public function __construct($dsn, $user, $pass, $read)
     {
