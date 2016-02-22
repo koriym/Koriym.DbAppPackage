@@ -30,7 +30,7 @@ composer create-project bear/skeleton {project-path}
 ```
 cd {project-path}
 composer require koriym/db-app-package
-php vendor/koriym/db-app-package/scripts/install.php
+php vendor/koriym/db-app-package/bin/install.php
 ```
 
 ## Module Install 
@@ -38,7 +38,7 @@ php vendor/koriym/db-app-package/scripts/install.php
 Replace `PackageModule` with `DbAppPackage` in your AppModule.
 
     use josegonzalez\Dotenv\Loader as Dotenv;
-    use Koriym\DbAppPackage\DbAppPackage;
+    use Koriym\DbAppPackage\DbAppPackage; // add this line
     use Ray\Di\AbstractModule;
 
     class AppModule extends AbstractModule
@@ -52,7 +52,8 @@ Replace `PackageModule` with `DbAppPackage` in your AppModule.
                 'filepath' => dirname(dirname(__DIR__)) . '/.env',
                 'toEnv' => true
             ]);
-            $this->install(new DbAppPackage($_ENV['DB_DSN'], $_ENV['DB_USER'], $_ENV['DB_PASS'], $_ENV['DB_READ']));
+             // add this line
+            $this->install(new DbAppPackage($_ENV['DB_DSN'], $_ENV['DB_USER'], $_ENV['DB_PASS'], $_ENV['DB_READ'])); 
         }
     }
 
@@ -60,7 +61,7 @@ Replace `PackageModule` with `DbAppPackage` in your AppModule.
 
 ## Database
 
-Setup `.env` file as follows.
+`.env`
 
     DB_DSN=mysql:host=localhost;dbname=task
     DB_USER=root
@@ -73,37 +74,20 @@ Setup `.env` file as follows.
 
 ## Database migrations
 
+Create migration.
+
     php vendor/bin/phinx create -c var/db/phinx.php MyNewMigration  
 
-Open created file and set it up as follows:
-
-```php
-<?php
-
-use Phinx\Migration\AbstractMigration;
-use Phinx\Db\Adapter\MysqlAdapter;
-
-class MyNewMigration extends AbstractMigration
-{
-    public function change()
-    {
-        // create the table
-        $table = $this->table('task');
-        $table->addColumn('title', 'string', ['limit' => 100])
-            ->addColumn('completed', 'text', ['limit' => MysqlAdapter::INT_TINY])
-            ->addColumn('created', 'datetime')
-            ->create();
-    }
-}
-```
 
 Perform migration.
 
     php vendor/bin/phinx migrate -c var/db/phinx.php
-    
-## Route
 
-Add `/task` route in `var/conf/aura.route.php` as follows:
+see more at [Phinx](http://docs.phinx.org/).
+    
+# Route
+
+Edit `var/conf/aura.route.php`.
 
 ```php
 <?php
@@ -111,184 +95,24 @@ Add `/task` route in `var/conf/aura.route.php` as follows:
 $router->route('/task', '/task/{id}');
 ```
 
-## Resource
+# QA
 
-Create `Resource/App/Task.php` file and set it up as following example `query Builder Ppattern` or `SQL locator pattern`
-
-### query builder pattern
-
-```php
-<?php
-
-namespace MyVendor\MyProject\Resource\App;
-
-use BEAR\RepositoryModule\Annotation\Cacheable;
-use BEAR\Resource\ResourceObject;
-use Koriym\Now\NowInject;
-use Koriym\QueryLocator\QueryLocatorInject;
-use Ray\AuraSqlModule\AuraSqlDeleteInject;
-use Ray\AuraSqlModule\AuraSqlInject;
-use Ray\AuraSqlModule\AuraSqlInsertInject;
-use Ray\AuraSqlModule\AuraSqlSelectInject;
-use Ray\AuraSqlModule\AuraSqlUpdateInject;
-
-/**
- * @Cacheable
- */
-class Task extends ResourceObject
-{
-    use AuraSqlInject;
-    use AuraSqlSelectInject;
-    use AuraSqlInsertInject;
-    use AuraSqlDeleteInject;
-    use AuraSqlUpdateInject;
-    use NowInject;
-    use QueryLocatorInject;
-
-    /**
-     * @param string $id
-     */
-    public function onGet($id = null)
-    {
-        $this->select
-            ->cols(['title', 'completed', 'created'])
-            ->from('task');
-        if ($id) {
-            $this->select
-                ->where('id = :id')
-                ->bindValue('id', $id);
-        }
-        $this->body = $this->pdo->fetchAssoc($this->select->getStatement(), $this->select->getBindValues());
-
-        return $this;
-    }
-
-    /**
-     * @param string $title
-     */
-    public function onPost($title)
-    {
-        $this->insert
-            ->into('task')
-            ->cols([
-                'title' => $title,
-                'created' => $this->now
-            ]);
-        $statement = $this->insert->getStatement();
-        $value = $this->insert->getBindValues();
-        $this->pdo->perform($statement, $value);
-        $id = $this->pdo->lastInsertId($this->insert->getLastInsertIdName('id'));
-        $this->code = 201;
-        $this->headers['Location'] = "/task/{$id}";
-
-        return $this;
-    }
-
-    /**
-     * @param string $id
-     */
-    public function onPatch($id)
-    {
-        $this->update
-            ->table('task')
-            ->cols([
-                'completed' => true
-            ])
-            ->where('id = :id')
-            ->bindValue('id', $id);
-        $this->pdo->perform($this->update->getStatement(), $this->update->getBindValues());
-        // affected row
-        // $rows = $this->pdo->perform($this->update->getStatement(), $this->update->getBindValues());
-        // $this->headers['x-affected-rows'] = $rows;
-
-        return $this;
-    }
-
-    /**
-     * @param $id
-     */
-    public function onDelete($id)
-    {
-        $this->delete
-            ->from('task')
-            ->where('id = :id')
-            ->bindValue('id', $id);
-        $this->pdo->perform($this->update->getStatement(), $this->update->getBindValues());
-
-        return $this;
-    }
-}
-```
-# Resource Request
-
-## Console access
-
-### OPTIONS
-```
-php bootstrap/api.php options /task
-
-// 200 OK
-// allow: get, post, patch, delete
-```
-### POST
-```
-php bootstrap/api.php post '/task?title=run'
-
-// 201 Created
-// Location: /task/1
-// content-type: application/hal+json
-// ...
-```
-
-### PATCH
+Perform  `phpmd`, `phpcs` and `phpunit`.
 
 ```
-php bootstrap/api.php patch /task/1
-
-// 200 OK
-// content-type: application/hal+json
+composer test
 ```
+# Run
 
-### GET
-```
-php bootstrap/api.php get /task/1
-```
-
-    200 OK
-    content-type: application/hal+json
-    ETag: 213861369
-    Last-Modified: Fri, 05 Feb 2016 15:05:55 GMT
-    
-    {
-        "run": {
-            "title": "run",
-            "completed": null,
-            "created": "2016-02-05 16:04:05"
-        },
-        "_links": {
-            "self": {
-                "href": "/task/1"
-            }
-        }
-    }
-
-## Web access
-
-Start web server.
+Web
 
 ```
-php -S 127.0.0.1:8080 bootstrap/api.php 
+php -S 127.0.0.1:8080 -t var/www
+curl -i -X GET http://127.0.0.1:8080/
 ```
 
-Request with `curl`.
+Console
 
 ```
-# OPTIONS
-curl -i -X OPTIONS http://127.0.0.1:8080/task
-# POST
-curl -i --form "title=mail" http://127.0.0.1:8080/task
-# PATCH
-curl -i -X PATCH http://127.0.0.1:8080/task/1
-# GET
-curl -i -X GET http://127.0.0.1:8080/task/1
+php bootstrap/api.php get '/'
 ```
