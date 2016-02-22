@@ -7,7 +7,7 @@
         "bear/package": "~1.0",
         "josegonzalez/dotenv": "~2.0",
         "koriym/query-locator": "~1.0",
-        "koriym/now": "~0.2",
+        "koriym/now": "~1.0",
         "robmorgan/phinx": "~0.5",
         "ray/aura-sql-module": "~1.0"
     },
