@@ -9,12 +9,18 @@ Dotenv::load([
     'expect' => ['DB_DSN', 'DB_USER'],
     'toEnv' => true
 ]);
-preg_match("/dbname=(\w+)/i", $_ENV['DB_DSN'], $parts);
+
+preg_match("/(.*?):(.*)/", $_ENV['DB_DSN'], $parts);
+$type = $parts[1];
+preg_match("/host=(\w+)/",  $_ENV['DB_DSN'], $parts);
+$host = $parts[1];
+preg_match("/dbname=(\w+)/",  $_ENV['DB_DSN'], $parts);
 $dbName = $parts[1];
+$dsn = sprintf('%s:host=%s', $type, $host);
 
 try {
-    $pdo = new \PDO($_ENV['DB_DSN'], $_ENV['DB_USER'], $_ENV['DB_PASS']);
-    $pdo->exec("CREATE DATABASE IF NOT EXISTS {$dbName}");
+    $pdo = new \PDO($dsn, $_ENV['DB_USER'], $_ENV['DB_PASS']);
+    $a = $pdo->exec("CREATE DATABASE IF NOT EXISTS {$dbName}");
     $pdo->exec("CREATE DATABASE IF NOT EXISTS {$dbName}_test");
     error_log("Database [{$dbName}] and [{$dbName}_test] are created.");
 } catch (PDOException $e) {
