@@ -24,7 +24,6 @@ try {
     $pdo->exec("CREATE DATABASE IF NOT EXISTS {$dbName}_test");
     error_log("Database [{$dbName}] and [{$dbName}_test] are created.");
 } catch (PDOException $e) {
-    echo $e;
-    echo "Database connection failed: user:{$_ENV['DB_USER']} passwd:{$_ENV['DB_PASS']}" . PHP_EOL;
+    echo $e->getMessage() . PHP_EOL;
     exit(1);
 }
