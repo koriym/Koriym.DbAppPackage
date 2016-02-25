@@ -7,6 +7,7 @@ This package contains the following libraries.
 * [Aura.SqlQuery v2](https://github.com/auraphp/Aura.SqlQuery) Independent query builders for MySQL, PostgreSQL, SQLite, and Microsoft SQL Server.
 * [Phinx](https://phinx.org/) Database migrations 
 * [Koriym.QueryLocator](https://github.com/koriym/Koriym.QueryLocator) SQL locator
+* [Koriym.DevPdoDtatement](https://github.com/koriym/Koriym.DevPdoStatement) PDOStatement for query inspection
 
 # Installation
 

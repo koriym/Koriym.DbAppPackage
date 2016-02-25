@@ -9,7 +9,8 @@
         "koriym/query-locator": "~1.0",
         "koriym/now": "~1.0",
         "robmorgan/phinx": "~0.5",
-        "ray/aura-sql-module": "~1.0"
+        "ray/aura-sql-module": "~1.0",
+        "koriym/dev-pdo-statement": "~0.1"
     },
     "autoload": {
         "psr-4": {
