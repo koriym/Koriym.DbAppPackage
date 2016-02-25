@@ -20,7 +20,7 @@ $dsn = sprintf('%s:host=%s', $type, $host);
 
 try {
     $pdo = new \PDO($dsn, $_ENV['DB_USER'], $_ENV['DB_PASS']);
-    $a = $pdo->exec("CREATE DATABASE IF NOT EXISTS {$dbName}");
+    $pdo->exec("CREATE DATABASE IF NOT EXISTS {$dbName}");
     $pdo->exec("CREATE DATABASE IF NOT EXISTS {$dbName}_test");
     error_log("Database [{$dbName}] and [{$dbName}_test] are created.");
 } catch (PDOException $e) {
