@@ -95,25 +95,3 @@ Edit `var/conf/aura.route.php`.
 /** @var $router \BEAR\Package\Provide\Router\AuraRoute */
 $router->route('/task', '/task/{id}');
 ```
-
-# QA
-
-Perform  `phpmd`, `phpcs` and `phpunit`.
-
-```
-composer test
-```
-# Run
-
-Web
-
-```
-php -S 127.0.0.1:8080 -t var/www
-curl -i -X GET http://127.0.0.1:8080/
-```
-
-Console
-
-```
-php bootstrap/api.php get '/'
-```
