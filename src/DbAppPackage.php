@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * This file is part of the Koriym.DevAppPackage
+ *
+ * @license http://opensource.org/licenses/MIT MIT
+ */
 namespace Koriym\DbAppPackage;
 
 use BEAR\Package\PackageModule;
