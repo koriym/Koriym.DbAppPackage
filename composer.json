@@ -12,6 +12,9 @@
         "ray/aura-sql-module": "~1.0",
         "koriym/dev-pdo-statement": "~0.1"
     },
+    "require-dev": {
+        "phpunit/dbunit": "~2.0"
+    },
     "autoload": {
         "psr-4": {
             "Koriym\\DbAppPackage\\": "src/"
