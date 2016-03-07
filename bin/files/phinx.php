@@ -9,7 +9,7 @@ Dotenv::load([
 
 $pdo = new PDO($_ENV['DB_DSN'], $_ENV['DB_USER'], $_ENV['DB_PASS']);
 preg_match("/dbname=(\w+)/i", $_ENV['DB_DSN'], $parts);
-$name = $parts[1];
+$name = isset($parts[1]) ? $parts[1] : '';
 
 return [
     "paths" => [
