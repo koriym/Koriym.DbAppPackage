@@ -7,9 +7,20 @@ Dotenv::load([
     'toEnv' => true
 ]);
 
-$pdo = new PDO($_ENV['DB_DSN'], $_ENV['DB_USER'], $_ENV['DB_PASS']);
-preg_match("/dbname=(\w+)/i", $_ENV['DB_DSN'], $parts);
-$name = isset($parts[1]) ? $parts[1] : '';
+preg_match("/(.*?):(.*)/", $_ENV['DB_DSN'], $parts);
+$type = $parts[1];
+preg_match("/host=(\w+)/",  $_ENV['DB_DSN'], $parts);
+$host = $parts[1];
+preg_match("/dbname=(\w+)/",  $_ENV['DB_DSN'], $parts);
+$dbName = $parts[1];
+
+$default = [
+    "adapter" => $type,
+    "host" => $host,
+    "name" => $dbName,
+    "user" => $_ENV['DB_USER'],
+    "pass" => $_ENV['DB_PASS']
+];
 
 return [
     "paths" => [
@@ -18,13 +29,9 @@ return [
     "environments" => [
         "default_migration_table" => "phinxlog",
         "default_database" => "default",
-        "default" => [
-            "name" => $name,
-            "connection" => $pdo
-        ],
+        "default" => $default,
         "test" => [
-            "name" => $name . '_test',
-            "connection" => $pdo
-        ]
+            "name" => $dbName . '_test'
+        ] + $default
     ]
 ];
