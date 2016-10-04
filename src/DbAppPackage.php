@@ -68,10 +68,10 @@ class DbAppPackage extends AbstractModule
         // database
         $this->install(
             new AuraSqlModule(
-                $_ENV['DB_DSN'],
-                $_ENV['DB_USER'],
-                $_ENV['DB_PASS'],
-                $_ENV['DB_READ']
+                $this->dsn,
+                $this->user,
+                $this->pass,
+                $this->read
             )
         );
         $this->install(new QueryLocatorModule($this->dbDir . '/sql'));
