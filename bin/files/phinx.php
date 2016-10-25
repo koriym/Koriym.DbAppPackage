@@ -9,9 +9,9 @@ Dotenv::load([
 
 preg_match("/(.*?):(.*)/", $_ENV['DB_DSN'], $parts);
 $type = $parts[1];
-preg_match("/host=(\w+)/",  $_ENV['DB_DSN'], $parts);
+preg_match("/host=([^;]+)/",  $_ENV['DB_DSN'], $parts);
 $host = $parts[1];
-preg_match("/dbname=(\w+)/",  $_ENV['DB_DSN'], $parts);
+preg_match("/dbname=([^;]+)/",  $_ENV['DB_DSN'], $parts);
 $dbName = $parts[1];
 
 $default = [
