@@ -7,12 +7,12 @@
  */
 namespace Koriym\DbAppPackage;
 
-use BEAR\Package\PackageModule;
 use BEAR\Package\Provide\Router\AuraRouterModule;
 use Ray\AuraSqlModule\AuraSqlModule;
 use Ray\Di\AbstractModule;
 use Koriym\QueryLocator\QueryLocatorModule;
 use Koriym\Now\NowModule;
+use Ray\Query\SqlQueryModule;
 
 class DbAppPackage extends AbstractModule
 {
@@ -47,13 +47,13 @@ class DbAppPackage extends AbstractModule
      * @param string $pass password if any
      * @param string $read comma separated slave db server list
      */
-    public function __construct($dsn, $user, $pass, $read)
+    public function __construct(string $dsn, string $user, string $pass, string $read)
     {
         $this->dsn = $dsn;
         $this->user = $user;
         $this->pass = $pass;
         $this->read = $read;
-        $appDir = dirname(dirname(dirname(dirname(__DIR__))));
+        $appDir = dirname(__DIR__, 4);
         $this->dbDir = $appDir . '/var/db';
         parent::__construct();
     }
@@ -75,8 +75,7 @@ class DbAppPackage extends AbstractModule
             )
         );
         $this->install(new QueryLocatorModule($this->dbDir . '/sql'));
-        // datetime
+        $this->install(new SqlQueryModule($this->dbDir . '/sql'));
         $this->install(new NowModule);
-        $this->install(new PackageModule);
     }
 }
