@@ -7,6 +7,7 @@
  */
 namespace Koriym\DbAppPackage;
 
+use BEAR\Package\PackageModule;
 use BEAR\Package\Provide\Router\AuraRouterModule;
 use Ray\AuraSqlModule\AuraSqlModule;
 use Ray\Di\AbstractModule;
@@ -77,5 +78,6 @@ class DbAppPackage extends AbstractModule
         $this->install(new QueryLocatorModule($this->dbDir . '/sql'));
         $this->install(new SqlQueryModule($this->dbDir . '/sql'));
         $this->install(new NowModule);
+        $this->install(new PackageModule);
     }
 }
